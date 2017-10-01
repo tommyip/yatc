@@ -1,0 +1,6 @@
+[package]
+name = "yatc"
+version = "0.1.0"
+authors = ["Tommy Ip <hkmp7tommy@gmail.com>"]
+
+[dependencies]
