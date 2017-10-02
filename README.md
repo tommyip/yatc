@@ -7,7 +7,7 @@ readability.
 
 Project status:
 
-- [ ] Lexer
+- [x] Lexer
 - [ ] Parser
 - [ ] IR
     - [ ] Optimizer

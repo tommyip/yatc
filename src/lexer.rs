@@ -158,3 +158,24 @@ fn is_integer(token: &str) -> bool {
 fn is_float(token: &str) -> bool {
     token.parse::<f32>().is_ok()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn simple_statement() {
+        let src = "let there = \"be lights\" * 13.37 ;";
+
+        let tokens = lex(src);
+        assert_eq!(tokens, Ok(vec![
+            Token { ty: TokenType::Keyword, value: "let", span: Span { start: 0, length: 3 } },
+            Token { ty: TokenType::Ident, value: "there", span: Span { start: 4, length: 5 } },
+            Token { ty: TokenType::Operator, value: "=", span: Span { start: 10, length: 1 } },
+            Token { ty: TokenType::Str, value: "\"be lights\"", span: Span { start: 12, length: 11 } },
+            Token { ty: TokenType::Operator, value: "*", span: Span { start: 24, length: 1 } },
+            Token { ty: TokenType::Float, value: "13.37", span: Span { start: 26, length: 5 } },
+            Token { ty: TokenType::Operator, value: ";", span: Span { start: 32, length: 1 } }
+       ]));
+    }
+}
