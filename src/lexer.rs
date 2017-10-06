@@ -12,30 +12,7 @@
 /// ]
 /// ```
 
-#[derive(Clone, Debug, PartialEq)]
-pub enum TokenType {
-    Symbol,
-    Keyword,
-    Operator,
-    Ident,
-    Integer,
-    Float,
-    Str,
-}
-
-/// The position of a token in a stream of characters.
-#[derive(Clone, Debug, PartialEq)]
-pub struct Span {
-    start: usize,
-    length: usize,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Token<'a> {
-    ty: TokenType,
-    value: &'a str,
-    span: Span,
-}
+use super::{TokenType, Token, Span};
 
 #[derive(Clone, Debug, PartialEq)]
 struct Context<'ctx> {
