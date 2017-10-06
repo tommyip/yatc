@@ -8,12 +8,13 @@
 ///     Token { ty: TokenType::Ident, value: "a", span: Span { start: 4, length: 1 } },
 ///     Token { ty: TokenType::Operator, value: "=", span: Span { start: 6, length: 1 } },
 ///     Token { ty: TokenType::Integer, value: "5", span: Span { start: 8, length: 1 } },
-///     Token { ty: TokenType::Operator, value: ";", span: Span { start: 10, length: 1 } },
+///     Token { ty: TokenType::Symbol, value: ";", span: Span { start: 10, length: 1 } },
 /// ]
 /// ```
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum TokenType {
+    Symbol,
     Keyword,
     Operator,
     Ident,
@@ -107,7 +108,9 @@ pub fn lex<'a>(src: &'a str) -> Result<Vec<Token<'a>>, String> {
                 let value = &ctx.src[start..ctx.ptr];
                 let ty;
 
-                ty = if is_operator(value) {
+                ty = if is_symbol(value) {
+                    TokenType::Symbol
+                } else if is_operator(value) {
                     TokenType::Operator
                 } else if is_integer(value) {
                     TokenType::Integer
@@ -137,6 +140,13 @@ fn space(c: char) -> bool { c == ' ' }
 fn newline(c: char) -> bool { c == '\n' }
 fn blank(c: char) -> bool { space(c) || newline(c) }
 
+fn is_symbol(token: &str) -> bool {
+    match token {
+        "{" | "}" | "(" | ")" | ";" | "," => true,
+        _ => false,
+    }
+}
+
 fn is_keyword(token: &str) -> bool {
     match token {
         "let" | "if" | "else" | "for" | "fn" | "return" => true,
@@ -146,7 +156,7 @@ fn is_keyword(token: &str) -> bool {
 
 fn is_operator(token: &str) -> bool {
     match token {
-        "+" | "-" | "*" | "/" | "=" | ">" | "<" | ";" => true,
+        "+" | "-" | "*" | "/" | "=" | ">" | "<" => true,
         _ => false,
     }
 }
@@ -175,7 +185,7 @@ mod tests {
             Token { ty: TokenType::Str, value: "\"be lights\"", span: Span { start: 12, length: 11 } },
             Token { ty: TokenType::Operator, value: "*", span: Span { start: 24, length: 1 } },
             Token { ty: TokenType::Float, value: "13.37", span: Span { start: 26, length: 5 } },
-            Token { ty: TokenType::Operator, value: ";", span: Span { start: 32, length: 1 } }
+            Token { ty: TokenType::Symbol, value: ";", span: Span { start: 32, length: 1 } }
        ]));
     }
 }
