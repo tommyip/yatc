@@ -12,6 +12,7 @@
 /// ]
 /// ```
 
+use std::collections::VecDeque;
 use super::{TokenType, Token, Span};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -43,9 +44,9 @@ impl<'ctx> Context<'ctx> {
     }
 }
 
-pub fn lex<'a>(src: &'a str) -> Result<Vec<Token<'a>>, String> {
+pub fn lex<'a>(src: &'a str) -> Result<VecDeque<Token<'a>>, String> {
     let mut ctx = Context::new(src);
-    let mut tokens = vec![];
+    let mut tokens = VecDeque::new();
 
     while !ctx.finished() {
         let start: usize = ctx.ptr;
@@ -60,7 +61,7 @@ pub fn lex<'a>(src: &'a str) -> Result<Vec<Token<'a>>, String> {
                 }
                 ctx.ptr += 1;
 
-                tokens.push(Token {
+                tokens.push_back(Token {
                     ty: TokenType::Str,
                     value: &ctx.src[start..ctx.ptr],
                     span: Span { start, length: ctx.ptr - start },
@@ -73,7 +74,7 @@ pub fn lex<'a>(src: &'a str) -> Result<Vec<Token<'a>>, String> {
                     // This is a line comment
                     ctx.skip_to_(newline);
                 } else {
-                    tokens.push(Token {
+                    tokens.push_back(Token {
                         ty: TokenType::Operator,
                         value: "/",
                         span: Span { start, length: 1 },
@@ -99,7 +100,7 @@ pub fn lex<'a>(src: &'a str) -> Result<Vec<Token<'a>>, String> {
                     TokenType::Ident
                 };
 
-                tokens.push(Token {
+                tokens.push_back(Token {
                     ty, value,
                     span: Span { start, length: ctx.ptr - start },
                 });
@@ -155,7 +156,7 @@ mod tests {
         let src = "let there = \"be lights\" * 13.37 ;";
 
         let tokens = lex(src);
-        assert_eq!(tokens, Ok(vec![
+        let vec = vec![
             Token { ty: TokenType::Keyword, value: "let", span: Span { start: 0, length: 3 } },
             Token { ty: TokenType::Ident, value: "there", span: Span { start: 4, length: 5 } },
             Token { ty: TokenType::Operator, value: "=", span: Span { start: 10, length: 1 } },
@@ -163,6 +164,7 @@ mod tests {
             Token { ty: TokenType::Operator, value: "*", span: Span { start: 24, length: 1 } },
             Token { ty: TokenType::Float, value: "13.37", span: Span { start: 26, length: 5 } },
             Token { ty: TokenType::Symbol, value: ";", span: Span { start: 32, length: 1 } }
-       ]));
+       ];
+        assert_eq!(tokens, Ok(VecDeque::from(vec)));
     }
 }
