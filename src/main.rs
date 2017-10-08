@@ -1,6 +1,7 @@
 /// Yet Another Tiny Compiler (yatc)
 
 mod lexer;
+mod parser;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum TokenType {
@@ -28,9 +29,11 @@ pub struct Token<'a> {
 }
 
 fn main() {
-    let src = "let apple = \"a type of fruit\" ; return apple + 1337 ;";
+    let src = "";
 
-    let token_stream = lexer::lex(src);
-
+    let token_stream = lexer::lex(src).unwrap();
     println!("token_stream: {:?}", token_stream);
+
+    let ast = parser::Parser::new(token_stream).parse();
+    println!("ast: {:?}", ast);
 }
