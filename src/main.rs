@@ -29,11 +29,11 @@ pub struct Token<'a> {
 }
 
 fn main() {
-    let src = "";
+    let src = "( 1 + 2 * ( 42 / 3 ) ) * 7";
 
     let token_stream = lexer::lex(src).unwrap();
     println!("token_stream: {:?}", token_stream);
 
-    let ast = parser::Parser::new(token_stream).parse();
-    println!("ast: {:?}", ast);
+    let parse_tree = parser::Parser::new(token_stream).parse();
+    println!("ast: {:?}", parse_tree);
 }
